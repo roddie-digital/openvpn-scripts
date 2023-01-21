@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 # 2021-07-23 https://roddie.digital
 # Check and regenerate OpenVPN CRL
 # Run as root
 
 # check location of crl
+echo "Checking location of CRL:"
 grep "crl-verify" /etc/openvpn/server.conf
 
 read -p "Press Enter to continue ..."
@@ -16,6 +17,7 @@ openssl crl -in /etc/openvpn/crl.pem -text | grep Next
 read -p "Press Enter to continue ..."
 
 # generate the new crl
+echo "Generating new CRL..."
 /etc/openvpn/easy-rsa/easyrsa gen-crl
 
 # copy it to the right location
@@ -28,6 +30,5 @@ systemctl restart openvpn
 systemctl status openvpn
 
 # check the new expiry date
-echo "New expiry date:"
 echo ""
-grep "crl-verify" /etc/openvpn/server.conf
+openssl crl -in /etc/openvpn/crl.pem -text | grep Next
